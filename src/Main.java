@@ -1,5 +1,3 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -69,11 +67,15 @@ public class Main {
             int maxFood = 750;
             List<Food> newFood = new ArrayList<>();
             for (Food f : food) {
-                if (Math.random() < 0.04 && food.size() < maxFood) { // 2% chance to reproduce per step
+                if (Math.random() < 0.01 && food.size() < maxFood) { // 2% chance to reproduce per step
                     newFood.add(f.reproduce(800, 600));
-                } else if (Math.random() < 0.05 && food.size() < maxFood) {
-                    newFood.add(new Food());
+                    newFood.add(f.reproduce(800, 600));
                 }
+            }
+            if (food.size() < maxFood) {
+                if (Math.random() < 0.2)
+                    food.add(new Food());
+                    food.add(new Food());// 10% chance each tick
             }
             food.addAll(newFood);
 
@@ -103,21 +105,25 @@ public class Main {
                 double avgFitnessa = popa.organisms.stream().mapToDouble(o -> o.fitness).average().orElse(0);
                 double avgEnergya = popa.organisms.stream().mapToDouble(o -> o.energy).average().orElse(0);
                 double avgSpeeda  = popa.organisms.stream().mapToDouble(o -> o.speed).average().orElse(0);
+                double avgAggressiona  = popa.organisms.stream().mapToDouble(o -> o.aggression).average().orElse(0);
                 double avgFitnessb = popb.organisms.stream().mapToDouble(o -> o.fitness).average().orElse(0);
                 double avgEnergyb = popb.organisms.stream().mapToDouble(o -> o.energy).average().orElse(0);
                 double avgSpeedb  = popb.organisms.stream().mapToDouble(o -> o.speed).average().orElse(0);
+                double avgAggressionb  = popb.organisms.stream().mapToDouble(o -> o.aggression).average().orElse(0);
                 graphPanel.addData("fitnessa", avgFitnessa);
                 graphPanel.addData("energya", avgEnergya);
                 graphPanel.addData("speeda", avgSpeeda);
+                graphPanel.addData("aggroa", avgAggressiona);
                 graphPanel.addData("fitnessb", avgFitnessb);
                 graphPanel.addData("energyb", avgEnergyb);
                 graphPanel.addData("speedb", avgSpeedb);
+                graphPanel.addData("aggrob", avgAggressionb);
                 graphPanel.addData("food", food.size());
                 graphPanel.addData("popa", popa.organisms.size());
                 graphPanel.addData("popb", popb.organisms.size());
                 graphPanel.addData("pred", predators.predators.size());
 
-                statsPanel.sendData(avgFitnessa, avgEnergya, avgSpeeda, avgFitnessb, avgEnergyb, avgSpeedb, food.size(), popa.organisms.size(), popb.organisms.size(), predators.predators.size());
+                statsPanel.sendData(avgFitnessa, avgEnergya, avgSpeeda, avgAggressiona, avgFitnessb, avgEnergyb, avgSpeedb, avgAggressionb, food.size(), popa.organisms.size(), popb.organisms.size(), predators.predators.size());
 
                 popPanel.colonya = popa.organisms;
                 popPanel.colonyb = popb.organisms;

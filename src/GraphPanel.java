@@ -32,17 +32,21 @@ class GraphPanel extends JPanel {
         history.put("fitnessa", new ArrayList<>());
         history.put("energya", new ArrayList<>());
         history.put("speeda", new ArrayList<>());
+        history.put("aggroa", new ArrayList<>());
         colors.put("fitnessa", Color.RED);
         colors.put("energya", Color.GREEN);
         colors.put("speeda", Color.BLUE);
+        colors.put("aggroa", Color.YELLOW);
 
         // Population B stats
         history.put("fitnessb", new ArrayList<>());
         history.put("energyb", new ArrayList<>());
         history.put("speedb", new ArrayList<>());
+        history.put("aggrob", new ArrayList<>());
         colors.put("fitnessb", new Color(255, 100, 100));
         colors.put("energyb", new Color(100, 255, 100));
         colors.put("speedb", new Color(100, 100, 255));
+        colors.put("aggrob", new Color(255, 252, 100));
 
         setBackground(Color.BLACK);
 
@@ -90,21 +94,21 @@ class GraphPanel extends JPanel {
         if (displayMode == DisplayMode.ALL_STACKED) {
             int h = getHeight() / 3;
             drawGraph(g, 0, 0, getWidth(), h, "Population Sizes",
-                    Arrays.asList("popa", "popb", "pred", "food"));
+                    Arrays.asList("popa", "popb", "pred"));
             drawGraph(g, 0, h, getWidth(), h, "Population A Stats",
-                    Arrays.asList("fitnessa", "energya", "speeda"));
+                    Arrays.asList("fitnessa", "aggroa", "speeda"));
             drawGraph(g, 0, 2 * h, getWidth(), h, "Population B Stats",
-                    Arrays.asList("fitnessb", "energyb", "speedb"));
+                    Arrays.asList("fitnessb", "aggrob", "speedb"));
         } else if (displayMode == DisplayMode.ONE_AT_A_TIME) {
             if (currentGraph == 0) {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population Sizes",
-                        Arrays.asList("popa", "popb", "pred", "food"));
+                        Arrays.asList("popa", "popb", "pred"));
             } else if (currentGraph == 1) {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population A Stats",
-                        Arrays.asList("fitnessa", "energya", "speeda"));
+                        Arrays.asList("fitnessa", "speeda", "aggroa"));
             } else {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population B Stats",
-                        Arrays.asList("fitnessb", "energyb", "speedb"));
+                        Arrays.asList("fitnessb", "speedb", "aggrob"));
             }
         } else if (displayMode == DisplayMode.ALL_OVERLAID) {
             drawGraph(g, 0, 0, getWidth(), getHeight(), "All Metrics",

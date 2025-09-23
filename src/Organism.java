@@ -9,7 +9,7 @@ class Organism {
     double fitness = 0;
     int energy;
     int age = 0;
-    int maturityAge = 15;
+    int maturityAge = 50;
     int colony;
     double speed;
     double aggression;
@@ -41,15 +41,10 @@ class Organism {
         this.genome = genome;
         this.colony = colony;
         decodeGenome();
-        energy = 100 + rand.nextInt(200);
+        energy = 200 + rand.nextInt(200);
 
-        if (colony == 0) {
-            x = rand.nextDouble() * WORLD_WIDTH / 2;
+            x = rand.nextDouble() * WORLD_WIDTH;
             y = rand.nextDouble() * WORLD_HEIGHT;
-        } else {
-            x = rand.nextDouble() * WORLD_WIDTH / 2 + WORLD_WIDTH / 2;
-            y = rand.nextDouble() * WORLD_HEIGHT;
-        }
     }
 
     // Decode genome into traits and neural network
@@ -95,8 +90,8 @@ class Organism {
             dy /= mag;
         }
 
-        x += dx * speed;
-        y += dy * speed;
+        x += dx * speed * 1.5;
+        y += dy * speed * 1.5;
 
         aggression = outputs[2];
         if (aggression > 0.5 && opponentVector != null) {
@@ -195,6 +190,7 @@ class Organism {
             }
         }
         double dist = Math.sqrt(minDist);
+        if (nearest == null) return new double[]{0, 0};
         double dx = (nearest.x - x) / dist; // direction unit vector
         double dy = (nearest.y - y) / dist;
         return new double[]{dx, dy};
