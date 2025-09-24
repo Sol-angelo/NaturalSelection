@@ -43,7 +43,7 @@ public class Main {
                     Organism mate = o.selectMate(popa.organisms);
                     newBabiesa.add(Organism.reproduce(o, mate));
                 }
-                o.energy--;
+                o.energy -= 2;
             }
             for (Organism o : popb.organisms) {
                 o.move(food, popb.organisms, popa.organisms);
@@ -53,7 +53,7 @@ public class Main {
                     Organism mate = o.selectMate(popb.organisms);
                     newBabiesb.add(Organism.reproduce(o, mate));
                 }
-                o.energy--;
+                o.energy -= 2;
             }
             for (Predator p : predators.predators) {
                 p.move(popa.organisms, popb.organisms);
@@ -64,16 +64,16 @@ public class Main {
                 }
                 p.energy--;
             }
-            int maxFood = 750;
+            int maxFood = 1000;
             List<Food> newFood = new ArrayList<>();
             for (Food f : food) {
-                if (Math.random() < 0.01 && food.size() < maxFood) { // 2% chance to reproduce per step
+                if (Math.random() < 0.02 && food.size() < maxFood) { // 2% chance to reproduce per step
                     newFood.add(f.reproduce(800, 600));
                     newFood.add(f.reproduce(800, 600));
                 }
             }
             if (food.size() < maxFood) {
-                if (Math.random() < 0.2)
+                if (Math.random() < 0.5)
                     food.add(new Food());
                     food.add(new Food());// 10% chance each tick
             }

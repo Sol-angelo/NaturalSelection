@@ -9,7 +9,7 @@ class Organism {
     double fitness = 0;
     int energy;
     int age = 0;
-    int maturityAge = 50;
+    int maturityAge = 25;
     int colony;
     double speed;
     double aggression;
@@ -69,7 +69,7 @@ class Organism {
         double[] opponentVector = vectorToNearestOrganism(opponents);
 
         age++;
-        energy -= speed / 2;
+        energy -= speed / 3;
 
         double[] inputs = new double[]{
                 foodVector[0], foodVector[1],

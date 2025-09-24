@@ -22,7 +22,7 @@ class Food {
     }
 
     public Food reproduce(double worldWidth, double worldHeight) {
-        double spread = 30; // max distance from parent
+        double spread = 100; // max distance from parent
         double newX = Math.min(worldWidth, Math.max(0, x + (rand.nextDouble() - 0.5) * spread));
         double newY = Math.min(worldHeight, Math.max(0, y + (rand.nextDouble() - 0.5) * spread));
         return new Food(newX, newY);

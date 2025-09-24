@@ -16,7 +16,7 @@ class Predator {
     public Predator(int genomeLength) {
         genome = new Genome(genomeLength);
         decodeGenome();
-        energy = 200 + rand.nextInt(200);
+        energy = 100 + rand.nextInt(200);
         age = 0;
         x = rand.nextDouble() * WORLD_WIDTH;
         y = rand.nextDouble() * WORLD_HEIGHT;
@@ -26,7 +26,7 @@ class Predator {
     public Predator(Genome genome) {
         this.genome = genome;
         decodeGenome();
-        energy = 200 + rand.nextInt(200);
+        energy = 100 + rand.nextInt(200);
         age = 0;
         x = rand.nextDouble() * WORLD_WIDTH;
         y = rand.nextDouble() * WORLD_HEIGHT;
