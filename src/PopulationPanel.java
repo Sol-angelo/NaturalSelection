@@ -4,18 +4,8 @@ import java.util.List;
 
 class PopulationPanel extends JPanel {
     List<Organism> colonya;
-    List<Organism> colonyb;
     List<Predator> predators;
     List<Food> food;
-
-    public PopulationPanel(List<Organism> colonya, List<Organism> colonyb, List<Predator> predators, List<Food> food) {
-        this.colonya = colonya;
-        this.colonyb = colonyb;
-        this.predators = predators;
-        this.food = food;
-        setPreferredSize(new Dimension(800, 600));
-        setBackground(new Color(176, 227, 147));
-    }
 
     public PopulationPanel(List<Organism> colonya, List<Predator> predators, List<Food> food) {
         this.colonya = colonya;
@@ -31,11 +21,6 @@ class PopulationPanel extends JPanel {
         for (Organism o : colonya) {
             int size = 3;
             g.setColor(Color.BLUE);
-            g.fillOval((int) o.x, (int) o.y, size, size);
-        }
-        for (Organism o : colonyb) {
-            int size = 3;
-            g.setColor(new Color(0, 178, 255));
             g.fillOval((int) o.x, (int) o.y, size, size);
         }
 

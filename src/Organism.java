@@ -10,7 +10,6 @@ class Organism {
     int energy;
     int age = 0;
     int maturityAge = 25;
-    int colony;
     double speed;
     double aggression;
 
@@ -21,30 +20,21 @@ class Organism {
     static final double WORLD_HEIGHT = 600;
 
     // Constructor for new random organism
-    public Organism(int genomeLength, int colony) {
+    public Organism(int genomeLength) {
         this.genome = new Genome(genomeLength);
-        this.colony = colony;
         decodeGenome();
         energy = 200 + rand.nextInt(200);
-
-        if (colony == 0) {
-            x = rand.nextDouble() * WORLD_WIDTH / 2;
+            x = rand.nextDouble() * WORLD_WIDTH;
             y = rand.nextDouble() * WORLD_HEIGHT;
-        } else {
-            x = rand.nextDouble() * WORLD_WIDTH / 2 + WORLD_WIDTH / 2;
-            y = rand.nextDouble() * WORLD_HEIGHT;
-        }
     }
 
     // Constructor from genome (used in reproduction)
-    public Organism(Genome genome, int colony) {
+    public Organism(Genome genome) {
         this.genome = genome;
-        this.colony = colony;
         decodeGenome();
         energy = 200 + rand.nextInt(200);
-
-            x = rand.nextDouble() * WORLD_WIDTH;
-            y = rand.nextDouble() * WORLD_HEIGHT;
+        x = rand.nextDouble() * WORLD_WIDTH;
+        y = rand.nextDouble() * WORLD_HEIGHT;
     }
 
     // Decode genome into traits and neural network
@@ -63,10 +53,10 @@ class Organism {
         return energy <= 0;
     }
 
-    public void move(List<Food> food, List<Organism> allies, List<Organism> opponents) {
+    public void move(List<Food> food, List<Organism> allies, List<Predator> opponents) {
         double[] foodVector = vectorToNearestFood(food);
         double[] allyVector = vectorToNearestOrganism(allies);
-        double[] opponentVector = vectorToNearestOrganism(opponents);
+        double[] opponentVector = vectorToNearestPredator(opponents);
 
         age++;
         energy -= speed / 3;
@@ -90,14 +80,14 @@ class Organism {
             dy /= mag;
         }
 
-        x += dx * speed * 1.5;
-        y += dy * speed * 1.5;
+        x += dx * speed * 2;
+        y += dy * speed * 2;
 
         aggression = outputs[2];
-        if (aggression > 0.5 && opponentVector != null) {
+        if (aggression > 0.5) {
             x += opponentVector[0] * speed * 0.5;
             y += opponentVector[1] * speed * 0.5;
-        } else if (aggression <= 0.5 && opponentVector != null) {
+        } else if (aggression <= 0.5) {
             x -= opponentVector[0] * speed * 0.5;
             y -= opponentVector[1] * speed * 0.5;
         }
@@ -107,8 +97,8 @@ class Organism {
         y = Math.max(0, Math.min(WORLD_HEIGHT, y));
     }
 
-    public boolean canReproduce() {
-        return age >= maturityAge && Math.random() < 0.01;
+    public boolean canReproduce(List<Organism> organisms) {
+        return age >= maturityAge && Math.random() < 0.015;
     }
 
     public Organism selectMate(List<Organism> population) {
@@ -119,7 +109,7 @@ class Organism {
     public static Organism reproduce(Organism parent1, Organism parent2) {
         Genome childGenome = Genome.crossover(parent1.genome, parent2.genome);
         childGenome.mutate(0.01, 0.2); // 1% mutation rate, +/- 0.2
-        return new Organism(childGenome, parent1.colony);
+        return new Organism(childGenome);
     }
 
     public void eatFood(List<Food> foodList) {
@@ -130,7 +120,7 @@ class Organism {
             double dy = y - f.y;
             if (dx * dx + dy * dy < 100) {
                 foodEaten++;
-                energy += 5;
+                energy += 10;
                 it.remove();
                 break;
             }
@@ -165,6 +155,23 @@ class Organism {
         double minDist = Double.MAX_VALUE;
         for (Organism o : list) {
             if (o == this) continue;
+            double dist = distanceSquared(o.x, o.y);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = o;
+            }
+        }
+        if (nearest == null) return new double[]{0, 0};
+        double dx = (nearest.x - x) / WORLD_WIDTH;
+        double dy = (nearest.y - y) / WORLD_HEIGHT;
+        return new double[]{dx, dy};
+    }
+
+    public double[] vectorToNearestPredator(List<Predator> list) {
+        if (list.isEmpty()) return new double[]{0, 0};
+        Predator nearest = null;
+        double minDist = Double.MAX_VALUE;
+        for (Predator o : list) {
             double dist = distanceSquared(o.x, o.y);
             if (dist < minDist) {
                 minDist = dist;

@@ -4,10 +4,10 @@ class Population {
     List<Organism> organisms = new ArrayList<>();
     Random rand = new Random();
 
-    public Population(int size, int colony) {
+    public Population(int size) {
         // Start with random traits
         for (int i = 0; i < size; i++) {
-            organisms.add(new Organism(115, colony));
+            organisms.add(new Organism(115));
         }
     }
 

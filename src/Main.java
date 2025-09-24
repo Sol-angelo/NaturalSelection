@@ -5,14 +5,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Population popa = new Population(200, 0);
-        Population popb = new Population(200, 1);
-        PredatorPopulation predators = new PredatorPopulation(20);
+        Population popa = new Population(400);
+        PredatorPopulation predators = new PredatorPopulation(50);
         List<Food> food = new ArrayList<>();
-        for (int i = 0; i < 100; i++) food.add(new Food());
+        for (int i = 0; i < 500; i++) food.add(new Food());
 
         JFrame frame = new JFrame("Natural Selection Simulation");
-        PopulationPanel popPanel = new PopulationPanel(popa.organisms, popb.organisms, predators.predators, food);
+        PopulationPanel popPanel = new PopulationPanel(popa.organisms, predators.predators, food);
         GraphPanel graphPanel = new GraphPanel();
         StatsPanel statsPanel = new StatsPanel();
 
@@ -36,33 +35,29 @@ public class Main {
             List<Predator> newBabiesp = new ArrayList<>();
             // Move + eat
             for (Organism o : popa.organisms) {
-                o.move(food, popa.organisms, popb.organisms);
+                o.move(food, popa.organisms, predators.predators);
                 o.eatFood(food);
-                if (o.canReproduce()) {
+                if (o.canReproduce(popa.organisms)) {
                     // choose a mate
                     Organism mate = o.selectMate(popa.organisms);
                     newBabiesa.add(Organism.reproduce(o, mate));
                 }
                 o.energy -= 2;
             }
-            for (Organism o : popb.organisms) {
-                o.move(food, popb.organisms, popa.organisms);
-                o.eatFood(food);
-                if (o.canReproduce()) {
-                    // choose a mate
-                    Organism mate = o.selectMate(popb.organisms);
-                    newBabiesb.add(Organism.reproduce(o, mate));
+
+            if (!popa.organisms.isEmpty()) {
+                if (popa.organisms.size() < 50 && Math.random() < 0.1) {
+                    popa.organisms.add(new Organism(new Genome(popa.organisms.getFirst().genome.genes.length)));
                 }
-                o.energy -= 2;
             }
             for (Predator p : predators.predators) {
-                p.move(popa.organisms, popb.organisms);
+                p.move(popa.organisms);
                 if (p.canReproduce()) {
                     // choose a mate
                     Predator mate = p.selectMate(predators.predators);
                     newBabiesp.add(Predator.reproduce(p, mate));
                 }
-                p.energy--;
+                p.energy -= 2;
             }
             int maxFood = 1000;
             List<Food> newFood = new ArrayList<>();
@@ -81,11 +76,9 @@ public class Main {
 
             // remove dead organisms
             popa.organisms.removeIf(Organism::isDead);
-            popb.organisms.removeIf(Organism::isDead);
             predators.predators.removeIf(Predator::isDead);
             // add new babies
             popa.organisms.addAll(newBabiesa);
-            popb.organisms.addAll(newBabiesb);
             predators.predators.addAll(newBabiesp);
 
             food.removeIf(Food::isDead);
@@ -97,36 +90,22 @@ public class Main {
                     o.fitness += o.foodEaten*10;
                     o.foodEaten = 0;
                 }
-                for (Organism o : popb.organisms) {
-                    o.fitness += o.foodEaten*10;
-                    o.foodEaten = 0;
-                }
 
                 double avgFitnessa = popa.organisms.stream().mapToDouble(o -> o.fitness).average().orElse(0);
                 double avgEnergya = popa.organisms.stream().mapToDouble(o -> o.energy).average().orElse(0);
                 double avgSpeeda  = popa.organisms.stream().mapToDouble(o -> o.speed).average().orElse(0);
                 double avgAggressiona  = popa.organisms.stream().mapToDouble(o -> o.aggression).average().orElse(0);
-                double avgFitnessb = popb.organisms.stream().mapToDouble(o -> o.fitness).average().orElse(0);
-                double avgEnergyb = popb.organisms.stream().mapToDouble(o -> o.energy).average().orElse(0);
-                double avgSpeedb  = popb.organisms.stream().mapToDouble(o -> o.speed).average().orElse(0);
-                double avgAggressionb  = popb.organisms.stream().mapToDouble(o -> o.aggression).average().orElse(0);
                 graphPanel.addData("fitnessa", avgFitnessa);
                 graphPanel.addData("energya", avgEnergya);
                 graphPanel.addData("speeda", avgSpeeda);
                 graphPanel.addData("aggroa", avgAggressiona);
-                graphPanel.addData("fitnessb", avgFitnessb);
-                graphPanel.addData("energyb", avgEnergyb);
-                graphPanel.addData("speedb", avgSpeedb);
-                graphPanel.addData("aggrob", avgAggressionb);
                 graphPanel.addData("food", food.size());
                 graphPanel.addData("popa", popa.organisms.size());
-                graphPanel.addData("popb", popb.organisms.size());
                 graphPanel.addData("pred", predators.predators.size());
 
-                statsPanel.sendData(avgFitnessa, avgEnergya, avgSpeeda, avgAggressiona, avgFitnessb, avgEnergyb, avgSpeedb, avgAggressionb, food.size(), popa.organisms.size(), popb.organisms.size(), predators.predators.size());
+                statsPanel.sendData(avgFitnessa, avgEnergya, avgSpeeda, avgAggressiona, food.size(), popa.organisms.size(), predators.predators.size());
 
                 popPanel.colonya = popa.organisms;
-                popPanel.colonyb = popb.organisms;
             }
 
             popPanel.repaint();

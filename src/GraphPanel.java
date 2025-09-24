@@ -57,10 +57,10 @@ class GraphPanel extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (displayMode == DisplayMode.ONE_AT_A_TIME) {
                     if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                        currentGraph = (currentGraph + 1) % 3;
+                        currentGraph = (currentGraph + 1) % 2;
                         repaint();
                     } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                        currentGraph = (currentGraph + 2) % 3;
+                        currentGraph = (currentGraph + 1) % 2;
                         repaint();
                     }
                 }
@@ -83,7 +83,7 @@ class GraphPanel extends JPanel {
         List<Double> list = history.get(metric);
         if (list == null) return;
         list.add(value);
-        if (list.size() > 200) list.remove(0);
+        if (list.size() > 6400) list.remove(0);
         repaint();
     }
 
@@ -102,13 +102,10 @@ class GraphPanel extends JPanel {
         } else if (displayMode == DisplayMode.ONE_AT_A_TIME) {
             if (currentGraph == 0) {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population Sizes",
-                        Arrays.asList("popa", "popb", "pred"));
-            } else if (currentGraph == 1) {
+                        Arrays.asList("popa", "pred"));
+            } else {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population A Stats",
                         Arrays.asList("fitnessa", "speeda", "aggroa"));
-            } else {
-                drawGraph(g, 0, 0, getWidth(), getHeight(), "Population B Stats",
-                        Arrays.asList("fitnessb", "speedb", "aggrob"));
             }
         } else if (displayMode == DisplayMode.ALL_OVERLAID) {
             drawGraph(g, 0, 0, getWidth(), getHeight(), "All Metrics",

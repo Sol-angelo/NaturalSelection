@@ -49,8 +49,8 @@ class Predator {
     }
 
     // Move toward nearest prey (either colony)
-    public void move(List<Organism> colony1, List<Organism> colony2) {
-        Organism nearest = nearestPrey(colony1, colony2);
+    public void move(List<Organism> colony1) {
+        Organism nearest = nearestPrey(colony1);
         if (nearest == null) return;
 
         // Neural network inputs: vector to nearest prey, own energy, maybe other inputs
@@ -65,11 +65,11 @@ class Predator {
 
         aggression = outputs[2];
         if (aggression > 0.5) { // optional: charge more aggressively toward prey
-            x += dx * speed * 0.5;
-            y += dy * speed * 0.5;
+            x += dx * speed * 2;
+            y += dy * speed * 2;
         } else { // more cautious
-            x += dx * speed * 0.2;
-            y += dy * speed * 0.2;
+            x += dx * speed * 1.5;
+            y += dy * speed * 1.5;
         }
 
         // stay inside world
@@ -77,20 +77,19 @@ class Predator {
         y = Math.max(0, Math.min(WORLD_HEIGHT, y));
 
         age++;
-        energy-= 4; // lose energy per step
+        energy -= speed / 2.5;
 
         // Eat prey if close
         double distSq = distanceSquared(nearest);
         if (distSq < 100) {
+            energy += nearest.energy/20; // predator gains energy
             nearest.energy = 0; // prey dies
-            energy += 30;       // predator gains energy
         }
     }
 
-    private Organism nearestPrey(List<Organism> colony1, List<Organism> colony2) {
+    private Organism nearestPrey(List<Organism> colony1) {
         List<Organism> allPrey = new ArrayList<>();
         allPrey.addAll(colony1);
-        allPrey.addAll(colony2);
 
         return allPrey.stream()
                 .filter(o -> o.energy > 0)
@@ -112,7 +111,7 @@ class Predator {
     }
 
     public boolean canReproduce() {
-        return age >= 20 && Math.random() < 0.02;
+        return age >= 40 && Math.random() < 0.03;
     }
 
     public Predator selectMate(List<Predator> population) {
