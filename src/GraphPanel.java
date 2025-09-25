@@ -20,33 +20,27 @@ class GraphPanel extends JPanel {
     public GraphPanel() {
         // Population
         history.put("popa", new ArrayList<>());
-        history.put("popb", new ArrayList<>());
         history.put("pred", new ArrayList<>());
         history.put("food", new ArrayList<>());
         colors.put("popa", Color.MAGENTA);
-        colors.put("popb", Color.CYAN);
         colors.put("pred", Color.ORANGE);
         colors.put("food", Color.YELLOW);
 
         // Population A stats
         history.put("fitnessa", new ArrayList<>());
-        history.put("energya", new ArrayList<>());
         history.put("speeda", new ArrayList<>());
         history.put("aggroa", new ArrayList<>());
         colors.put("fitnessa", Color.RED);
-        colors.put("energya", Color.GREEN);
         colors.put("speeda", Color.BLUE);
-        colors.put("aggroa", Color.YELLOW);
+        colors.put("aggroa", Color.GREEN);
 
         // Population B stats
-        history.put("fitnessb", new ArrayList<>());
-        history.put("energyb", new ArrayList<>());
-        history.put("speedb", new ArrayList<>());
-        history.put("aggrob", new ArrayList<>());
-        colors.put("fitnessb", new Color(255, 100, 100));
-        colors.put("energyb", new Color(100, 255, 100));
-        colors.put("speedb", new Color(100, 100, 255));
-        colors.put("aggrob", new Color(255, 252, 100));
+        history.put("fitnessp", new ArrayList<>());
+        history.put("speedp", new ArrayList<>());
+        history.put("aggrop", new ArrayList<>());
+        colors.put("fitnessp", new Color(255, 100, 100));
+        colors.put("speedp", new Color(100, 100, 255));
+        colors.put("aggrop", new Color(100, 255, 108));
 
         setBackground(Color.BLACK);
 
@@ -57,10 +51,10 @@ class GraphPanel extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (displayMode == DisplayMode.ONE_AT_A_TIME) {
                     if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                        currentGraph = (currentGraph + 1) % 2;
+                        currentGraph = (currentGraph + 1) % 3;
                         repaint();
                     } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                        currentGraph = (currentGraph + 1) % 2;
+                        currentGraph = (currentGraph + 2) % 3;
                         repaint();
                     }
                 }
@@ -95,17 +89,20 @@ class GraphPanel extends JPanel {
             int h = getHeight() / 3;
             drawGraph(g, 0, 0, getWidth(), h, "Population Sizes",
                     Arrays.asList("popa", "popb", "pred"));
-            drawGraph(g, 0, h, getWidth(), h, "Population A Stats",
+            drawGraph(g, 0, h, getWidth(), h, "Prey Stats",
                     Arrays.asList("fitnessa", "aggroa", "speeda"));
-            drawGraph(g, 0, 2 * h, getWidth(), h, "Population B Stats",
+            drawGraph(g, 0, 2 * h, getWidth(), h, "Predator Stats",
                     Arrays.asList("fitnessb", "aggrob", "speedb"));
         } else if (displayMode == DisplayMode.ONE_AT_A_TIME) {
             if (currentGraph == 0) {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Population Sizes",
                         Arrays.asList("popa", "pred"));
-            } else {
-                drawGraph(g, 0, 0, getWidth(), getHeight(), "Population A Stats",
+            } else if (currentGraph == 1) {
+                drawGraph(g, 0, 0, getWidth(), getHeight(), "Prey Stats",
                         Arrays.asList("fitnessa", "speeda", "aggroa"));
+            } else {
+                drawGraph(g, 0, 0, getWidth(), getHeight(), "Predator Stats",
+                        Arrays.asList("fitnessp", "aggrop", "speedp"));
             }
         } else if (displayMode == DisplayMode.ALL_OVERLAID) {
             drawGraph(g, 0, 0, getWidth(), getHeight(), "All Metrics",

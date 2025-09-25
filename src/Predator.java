@@ -4,6 +4,8 @@ class Predator {
     Genome genome;           // holds traits and neural network weights
     NeuralNetwork brain;     // decoded from genome
     double x, y;
+    int energyGained = 0;
+    double fitness = 0;
     int energy;
     int age;
     double speed;
@@ -82,7 +84,8 @@ class Predator {
         // Eat prey if close
         double distSq = distanceSquared(nearest);
         if (distSq < 100) {
-            energy += nearest.energy/20; // predator gains energy
+            energy += nearest.energy/20;
+            energyGained += nearest.energy/20;// predator gains energy
             nearest.energy = 0; // prey dies
         }
     }

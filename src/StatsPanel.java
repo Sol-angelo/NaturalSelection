@@ -10,6 +10,10 @@ class StatsPanel extends JPanel {
     double energya = 0;
     double speeda = 0;
     double aggroa = 0;
+    double fitnessp = 0;
+    double energyp = 0;
+    double speedp = 0;
+    double aggrop = 0;
     int food = 0;
     int popa = 0;
     int pred = 0;
@@ -26,7 +30,7 @@ class StatsPanel extends JPanel {
         // Label latest value
         g.setColor(Color.WHITE); // white text on black background
         g.setFont(new Font("Calibri", Font.BOLD, 16));
-        g.drawString("Population A", 20, 40);
+        g.drawString("Prey", 20, 40);
 
         g.setFont(new Font("Calibri", Font.PLAIN, 12));
         g.drawString("Avg fitness: " + String.format("%.2f", fitnessa), 20, 60);
@@ -39,6 +43,10 @@ class StatsPanel extends JPanel {
         g.drawString("Predators", 20, 150);
 
         g.setFont(new Font("Calibri", Font.PLAIN, 12));
+        g.drawString("Avg fitness: " + String.format("%.2f", fitnessp), 20, 170);
+        g.drawString("Avg energy: " + String.format("%.2f", energyp), 20, 185);
+        g.drawString("Avg speed: " + String.format("%.2f", speedp), 20, 200);
+        g.drawString("Avg aggression: " + String.format("%.2f", aggrop), 20, 215);
         g.drawString("Population: " + pred, 20, 230);
 
         g.setFont(new Font("Calibri", Font.BOLD, 16));
@@ -48,11 +56,15 @@ class StatsPanel extends JPanel {
         g.drawString("Food: " + food, 20, 280);
     }
 
-    public void sendData(double avgFitnessa, double avgEnergya, double avgSpeeda, double avgAggressiona,int size, int size1, int size3) {
+    public void sendData(double avgFitnessa, double avgEnergya, double avgSpeeda, double avgAggressiona, double avgFitnessp, double avgEnergyp, double avgSpeedp, double avgAggressionp, int size, int size1, int size3) {
         fitnessa = avgFitnessa;
         energya = avgEnergya;
         speeda = avgSpeeda;
         aggroa = avgAggressiona;
+        fitnessp = avgFitnessp;
+        energyp = avgEnergyp;
+        speedp = avgSpeedp;
+        aggrop = avgAggressionp;
         food = size;
         popa = size1;
         pred = size3;
