@@ -12,8 +12,8 @@ class Food {
     }
 
     public Food() {
-        x = rand.nextDouble() * 800;
-        y = rand.nextDouble() * 600;
+        x = rand.nextDouble() * Main.worldWidth;
+        y = rand.nextDouble() * Main.worldHeight;
     }
 
     public Food(double x, double y) {

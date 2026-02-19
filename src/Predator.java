@@ -10,9 +10,10 @@ class Predator {
     int age;
     double speed;
     double aggression;
-    static final double WORLD_WIDTH = 800;
-    static final double WORLD_HEIGHT = 600;
+    static final double WORLD_WIDTH = Main.worldWidth;
+    static final double WORLD_HEIGHT = Main.worldHeight;
     static Random rand = new Random();
+    int visionRadius = 500;
 
     // Constructor for a random predator
     public Predator(int genomeLength) {
@@ -37,7 +38,7 @@ class Predator {
     // Decode genome into traits and neural network
     public void decodeGenome() {
         // genome[0] = speed, genome[1] = aggression
-        speed = 0.1 + Math.max(0, genome.genes[0] * 5);            // scaled 0.1–5
+        speed = Math.max(0.1 + genome.genes[0] * 5, 1);
         aggression = (genome.genes[1] + 1) / 2.0;                  // normalize 0–1
 
         // remaining genes for NN weights
@@ -114,10 +115,45 @@ class Predator {
     }
 
     public boolean canReproduce() {
-        return age >= 40 && Math.random() < 0.03;
+        return age >= 40 && Math.random() < 0.5;
     }
 
     public Predator selectMate(List<Predator> population) {
-        return population.get(rand.nextInt(population.size()));
+        Predator mate;
+        ArrayList<Predator> available = selectPredatorsInRange(population, this, visionRadius);
+        if (available.size() > 0) {
+            for(int i = 0; i < available.size(); i++) {
+                System.out.println("flag");
+                mate = available.get(rand.nextInt(available.size()));
+                double dist = distanceSquared(mate.x, mate.y);
+                if (dist <= visionRadius && mate.canReproduce()) {
+                    return mate;
+                }
+            }
+        } else {
+            return null;
+        }
+        return null;
+    }
+
+    public ArrayList<Predator> selectPredatorsInRange(List<Predator> population, Predator initial, int radius) {
+        ArrayList<Predator> organisms = new ArrayList<>();
+        for (Predator o : population) {
+            if (o != initial) {
+                if (distanceSquared(o.x, o.y) <= radius) {
+                    organisms.add(o);
+                }
+            }
+        }
+        if (organisms.size() > 0) {
+            System.out.println("predators: " + organisms);
+        }
+        return organisms;
+    }
+
+    public double distanceSquared(double x1, double y1) {
+        double dx = x - x1;
+        double dy = y - y1;
+        return dx * dx + dy * dy;
     }
 }

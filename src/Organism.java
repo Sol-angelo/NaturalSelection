@@ -12,17 +12,21 @@ class Organism {
     int maturityAge = 25;
     double speed;
     double aggression;
+    double visionRadius = 400;
 
     static Random rand = new Random();
 
     // World dimensions
-    static final double WORLD_WIDTH = 800;
-    static final double WORLD_HEIGHT = 600;
+    static final double WORLD_WIDTH = Main.worldWidth;
+    static final double WORLD_HEIGHT = Main.worldHeight;
 
     // Constructor for new random organism
     public Organism(int genomeLength) {
         this.genome = new Genome(genomeLength);
         decodeGenome();
+        visionRadius = 400;
+        speed = 0.5;
+        aggression = 0.5;
         energy = 200 + rand.nextInt(200);
             x = rand.nextDouble() * WORLD_WIDTH;
             y = rand.nextDouble() * WORLD_HEIGHT;
@@ -42,10 +46,10 @@ class Organism {
         // Example mapping: genome[0] = speed, genome[1] = aggression, rest = NN weights
         speed = 0.1 + Math.max(0, genome.genes[0] * 5);                 // scaled 0.1–5
         aggression = (genome.genes[1] + 1) / 2.0;                       // normalize to 0–1
-
+        visionRadius = 400*(genome.genes[2]) + 400;
         // remaining genes for NN weights
-        int nnWeights = genome.genes.length - 2;
-        double[] nnArray = Arrays.copyOfRange(genome.genes, 2, genome.genes.length);
+        int nnWeights = genome.genes.length - 3;
+        double[] nnArray = Arrays.copyOfRange(genome.genes, 3, genome.genes.length);
         brain = new NeuralNetwork(7, 10, 3, nnArray); // assume constructor can accept weights array
     }
 
@@ -97,12 +101,42 @@ class Organism {
         y = Math.max(0, Math.min(WORLD_HEIGHT, y));
     }
 
-    public boolean canReproduce(List<Organism> organisms) {
-        return age >= maturityAge && Math.random() < 0.015;
+    public boolean canReproduce() {
+        return age >= maturityAge && Math.random() < 0.125;
     }
 
     public Organism selectMate(List<Organism> population) {
-        return population.get(rand.nextInt(population.size()));
+        boolean flag = false;
+        Organism mate;
+        ArrayList<Organism> available = selectOrganismsInRange(population, this, visionRadius);
+        if (available.size() > 0) {
+            for(int i = 0; i < available.size(); i++) {
+                System.out.println("flag");
+                mate = available.get(rand.nextInt(available.size()));
+                double dist = distanceSquared(mate.x, mate.y);
+                if (dist <= visionRadius && mate.canReproduce()) {
+                    return mate;
+                }
+            }
+        } else {
+            return null;
+        }
+        return null;
+    }
+
+    public ArrayList<Organism> selectOrganismsInRange(List<Organism> population, Organism initial, double radius) {
+        ArrayList<Organism> organisms = new ArrayList<>();
+        for (Organism o : population) {
+            if (o != initial) {
+                if (distanceSquared(o.x, o.y) <= radius) {
+                    organisms.add(o);
+                }
+            }
+        }
+        if (organisms.size() > 0) {
+            System.out.println("organisms: " + organisms);
+        }
+        return organisms;
     }
 
     // Reproduction: crossover genomes
@@ -136,7 +170,7 @@ class Organism {
     }
 
     // Find nearest opponent
-    public Organism nearestOpponent(List<Organism> otherColony) {
+    public Predator nearestOpponent(List<Predator> otherColony) {
         return otherColony.stream()
                 .min(Comparator.comparingDouble(o -> distanceSquared(o.x, o.y)))
                 .orElse(null);
@@ -191,7 +225,7 @@ class Organism {
         double minDist = Double.MAX_VALUE;
         for (Food f : foods) {
             double dist = distanceSquared(f.x, f.y);
-            if (dist < minDist) {
+            if (dist < minDist && dist < visionRadius) {
                 minDist = dist;
                 nearest = f;
             }

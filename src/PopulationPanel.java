@@ -11,7 +11,7 @@ class PopulationPanel extends JPanel {
         this.colonya = colonya;
         this.predators = predators;
         this.food = food;
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(1200, 900));
         setBackground(new Color(176, 227, 147));
     }
 
@@ -19,13 +19,13 @@ class PopulationPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         for (Organism o : colonya) {
-            int size = 3;
+            int size = 2;
             g.setColor(Color.BLUE);
             g.fillOval((int) o.x, (int) o.y, size, size);
         }
 
         for (Predator p : predators) {
-            int size = 5;
+            int size = 3;
             g.setColor(Color.RED);
             g.fillOval((int) p.x, (int) p.y, size, size);
         }
@@ -33,7 +33,7 @@ class PopulationPanel extends JPanel {
         // draw food as yellow dots
         g.setColor(Color.YELLOW);
         for (Food f : food) {
-            g.fillRect((int) f.x, (int) f.y, 4, 4);
+            g.fillRect((int) f.x, (int) f.y, 2, 2);
         }
     }
 }

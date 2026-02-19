@@ -7,7 +7,7 @@ class Population {
     public Population(int size) {
         // Start with random traits
         for (int i = 0; i < size; i++) {
-            organisms.add(new Organism(115));
+            organisms.add(new Organism(116));
         }
     }
 

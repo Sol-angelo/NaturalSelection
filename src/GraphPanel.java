@@ -30,9 +30,11 @@ class GraphPanel extends JPanel {
         history.put("fitnessa", new ArrayList<>());
         history.put("speeda", new ArrayList<>());
         history.put("aggroa", new ArrayList<>());
+        history.put("visiona", new ArrayList<>());
         colors.put("fitnessa", Color.RED);
         colors.put("speeda", Color.BLUE);
         colors.put("aggroa", Color.GREEN);
+        colors.put("visiona", Color.YELLOW);
 
         // Population B stats
         history.put("fitnessp", new ArrayList<>());
@@ -99,7 +101,7 @@ class GraphPanel extends JPanel {
                         Arrays.asList("popa", "pred"));
             } else if (currentGraph == 1) {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Prey Stats",
-                        Arrays.asList("fitnessa", "speeda", "aggroa"));
+                        Arrays.asList("fitnessa", "speeda", "aggroa", "visiona"));
             } else {
                 drawGraph(g, 0, 0, getWidth(), getHeight(), "Predator Stats",
                         Arrays.asList("fitnessp", "aggrop", "speedp"));
